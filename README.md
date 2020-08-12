@@ -11,4 +11,9 @@ A simplet todo list app
 5. Users can delete reminder
 
 # Screeshots
-![alt-text-1](/assets/1.png "image 1") ![alt-text-2](/assets/2.png "image 2")
+<table>
+  <tr>
+    <td><img src="/assets/1.png" width=270 height=480></td>
+    <td><img src="/assets/2.png" width=270 height=480></td>
+  </tr>
+ </table>
