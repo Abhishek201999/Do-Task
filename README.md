@@ -9,4 +9,4 @@ A simplet todo list app
 3. You can delete a task by sliding it from right to left.
 
 # Screeshots
-![alt-text-1](/assets/1.jpg "image 1") ![alt-text-2](/assets/2.jpg "image 2")
+![alt-text-1](/assets/1.png "image 1") ![alt-text-2](/assets/2.png "image 2")
