@@ -1,16 +1,12 @@
-# todo
+# Do Task 
 
-A new Flutter project.
+A simplet todo list app 
 
-## Getting Started
+# Features 
 
-This project is a starting point for a Flutter application.
+1. Users can create their task by clicking the '+' buttons.
+2. You can mark a task as done by checking a box.
+3. You can delete a task by sliding it from right to left.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Screeshots
+![alt-text-1](/assets/1.jpg "image 1") ![alt-text-2](/assets/2.jpg "image 2")
