@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import './main.dart';
 
 class AddTask extends StatefulWidget {
   final Function save;
@@ -10,11 +12,104 @@ class AddTask extends StatefulWidget {
 
 class _AddTaskState extends State<AddTask> {
   final _taskController = TextEditingController();
+  var enteredTask;
   bool isButtonEnabled = false;
+  DateTime scheduledDate;
+  DateTime pickedDate;
 
-  void _submitData() {
-    final enteredTask = _taskController.text;
-    widget.save(enteredTask);
+  @override
+  Widget build(BuildContext context) {
+    var keyHeight = MediaQuery.of(context).viewInsets.bottom + 130;
+
+    return Container(
+      height: keyHeight,
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: <Widget>[
+          TextField(
+            autofocus: true,
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(color: Colors.blue, width: 2)),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              hintText: 'What would you like to do?',
+            ),
+            onChanged: (val) => isEnabled(),
+            controller: _taskController,
+            onSubmitted: (_) => _submitData(),
+          ),
+          Row(
+            children: [
+              OutlineButton(
+                child: Text('Reminder'),
+                onPressed: () async {
+                  await _selectDate(context);
+                  if (pickedDate != null) {
+                    await _selectTime(context);
+                  }
+                },
+              ),
+              Spacer(),
+              OutlineButton(
+                child: Text('Save'),
+                onPressed: _taskController.text.isNotEmpty
+                    ? () async {
+                        await _submitData();
+                      }
+                    : () {},
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<void> _submitData() async {
+    enteredTask = _taskController.text;
+    String scheduleDateString;
+    var id = DateTime.now().millisecond;
+    if (scheduledDate != null) {
+      await schedule(id);
+      scheduleDateString = scheduledDate.toIso8601String();
+    }
+
+    widget.save(
+      id,
+      enteredTask,
+      scheduleDateString,
+    );
+  }
+
+  Future<DateTime> _selectDate(BuildContext context) async {
+    pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+
+    return pickedDate;
+  }
+
+  Future<TimeOfDay> _selectTime(BuildContext context) async {
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    setState(() {
+      scheduledDate =
+          pickedDate.add(Duration(hours: picked.hour, minutes: picked.minute));
+    });
+
+    return picked;
   }
 
   @override
@@ -38,36 +133,21 @@ class _AddTaskState extends State<AddTask> {
     return isButtonEnabled;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var keyHeight = MediaQuery.of(context).viewInsets.bottom + 100;
-
-    return Container(
-      height: keyHeight,
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          TextField(
-            autofocus: true,
-            decoration: InputDecoration(
-              labelText: 'What would you like to do?',
-              suffixIcon: IconButton(
-                icon: const Icon(
-                  Icons.send,
-                  color: Colors.deepPurple,
-                ),
-                onPressed: _taskController.text.isNotEmpty
-                    ? () => _submitData()
-                    : () {},
-              ),
-            ),
-            onChanged: (val) => isEnabled(),
-            controller: _taskController,
-            onSubmitted: (_) => _submitData(),
-          ),
-        ],
-      ),
+  Future<void> schedule(int id) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      enteredTask,
+      'To Do Notification',
+      'Do the task',
+      priority: Priority.Max,
+      importance: Importance.Max,
+      playSound: true,
     );
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics,
+      iOSPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.schedule(id, 'Task reminder',
+        enteredTask, scheduledDate, platformChannelSpecifics);
   }
 }

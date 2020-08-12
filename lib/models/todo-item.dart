@@ -6,13 +6,15 @@ class TodoItem extends Model {
   int id;
   String task;
   bool complete;
+  String reminder;
 
-  TodoItem({this.id, this.task, this.complete});
+  TodoItem({this.id, this.task, this.complete, this.reminder});
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       'task': task,
       'complete': complete,
+      'reminder': reminder,
     };
     if (id != null) {
       map['id'] = id;
@@ -25,6 +27,7 @@ class TodoItem extends Model {
       id: map['id'],
       task: map['task'],
       complete: map['complete'] == 1,
+      reminder: map['reminder'],
     );
   }
 }

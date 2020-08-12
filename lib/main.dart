@@ -3,9 +3,19 @@ import './models/todo-item.dart';
 import './services/db.dart';
 import './addTask.dart';
 import './format.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  var initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  var initializationSettingsIOS = IOSInitializationSettings();
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   await DB.init();
   runApp(MyApp());
 }
@@ -17,6 +27,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Do Task',
       home: MyHomePage(),
+      theme: ThemeData(
+        fontFamily: 'ProductSans',
+        brightness: Brightness.light,
+        primaryColor: Colors.lightBlueAccent,
+        accentColor: Colors.blue[200],
+      ),
     );
   }
 }
@@ -54,6 +70,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void toggle(TodoItem item) async {
     item.complete = !item.complete;
     dynamic result = await DB.update(TodoItem.table, item);
+    if (item.complete == true && item.reminder != null) {
+      await flutterLocalNotificationsPlugin.cancel(item.id);
+    }
 
     print(result);
     refresh();
@@ -61,15 +80,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void delete(TodoItem item) async {
     DB.delete(TodoItem.table, item);
+    if (item.complete == false && item.reminder != null) {
+      await flutterLocalNotificationsPlugin.cancel(item.id);
+    }
 
     refresh();
   }
 
-  void save(String input) async {
+  void save(int id, String input, String scheduledTime) async {
     Navigator.of(context).pop();
     TodoItem item = TodoItem(
+      id: id,
       task: input,
       complete: false,
+      reminder: scheduledTime,
     );
     await DB.insert(TodoItem.table, item);
     setState(() => input = '');
@@ -95,10 +119,10 @@ class _MyHomePageState extends State<MyHomePage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.deepPurple,
+          // backgroundColor: Colors.deepPurple,
           title: const Text('Do Task'),
           bottom: TabBar(
-            indicatorColor: Colors.deepPurpleAccent,
+            // indicatorColor: Colors.deepPurpleAccent,
             tabs: <Widget>[
               Tab(
                 icon: const Icon(Icons.format_list_numbered),
@@ -146,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.deepPurple,
+          // backgroundColor: Colors.deepPurple,
           onPressed: () => startAddNewTask(context),
           child: const Icon(Icons.add),
         ),
