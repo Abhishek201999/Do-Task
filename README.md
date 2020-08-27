@@ -13,7 +13,7 @@ A simplet todo list app
 # Screeshots
 <table>
   <tr>
-    <td><img src="/assets/1.png" width=300 height=550></td>
-    <td><img src="/assets/2.png" width=300 height=550></td>
+    <td><img src="/assets/1.png" </td>
+    <td><img src="/assets/2.png" </td>
   </tr>
  </table>
