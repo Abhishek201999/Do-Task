@@ -72,19 +72,23 @@ class _AddTaskState extends State<AddTask> {
   }
 
   Future<void> _submitData() async {
-    enteredTask = _taskController.text;
-    String scheduleDateString;
-    var id = DateTime.now().millisecond;
-    if (scheduledDate != null) {
-      await schedule(id);
-      scheduleDateString = scheduledDate.toIso8601String();
-    }
+    try {
+      enteredTask = _taskController.text;
+      String scheduleDateString;
+      var id = DateTime.now().millisecond;
+      if (scheduledDate != null) {
+        await schedule(id);
+        scheduleDateString = scheduledDate.toIso8601String();
+      }
 
-    widget.save(
-      id,
-      enteredTask,
-      scheduleDateString,
-    );
+      widget.save(
+        id,
+        enteredTask,
+        scheduleDateString,
+      );
+    } catch (error) {
+      showErrorDialog();
+    }
   }
 
   Future<DateTime> _selectDate(BuildContext context) async {
@@ -134,20 +138,35 @@ class _AddTaskState extends State<AddTask> {
   }
 
   Future<void> schedule(int id) async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      enteredTask,
-      'To Do Notification',
-      'Do the task',
-      priority: Priority.Max,
-      importance: Importance.Max,
-      playSound: true,
+    try {
+      var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        enteredTask,
+        'To Do Notification',
+        'Do the task',
+        priority: Priority.Max,
+        importance: Importance.Max,
+        playSound: true,
+      );
+      var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+      NotificationDetails platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics,
+        iOSPlatformChannelSpecifics,
+      );
+      await flutterLocalNotificationsPlugin.schedule(id, 'Task reminder',
+          enteredTask, scheduledDate, platformChannelSpecifics);
+    } catch (error) {
+      showErrorDialog();
+    }
+  }
+
+  void showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Text('An error occured '),
+        );
+      },
     );
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics,
-      iOSPlatformChannelSpecifics,
-    );
-    await flutterLocalNotificationsPlugin.schedule(id, 'Task reminder',
-        enteredTask, scheduledDate, platformChannelSpecifics);
   }
 }
