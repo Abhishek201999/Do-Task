@@ -47,7 +47,7 @@ class _FormatState extends State<Format> {
           icon: widget.item.complete
               ? const Icon(
                   Icons.check_box,
-                  color: Colors.lightBlueAccent,
+                  color: Color.fromRGBO(92, 119, 210, 1),
                 )
               : const Icon(Icons.check_box_outline_blank),
           onPressed: () => widget.toggle(widget.item),

@@ -23,7 +23,7 @@ class _AddTaskState extends State<AddTask> {
 
     return Container(
       height: keyHeight,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(8),
       child: Column(
         children: <Widget>[
           TextField(
@@ -32,11 +32,12 @@ class _AddTaskState extends State<AddTask> {
               fillColor: Colors.white,
               filled: true,
               enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  borderSide: BorderSide(color: Colors.blue, width: 2)),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor, width: 2)),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                borderSide: BorderSide(color: Colors.blue),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderSide: BorderSide(color: Theme.of(context).primaryColor),
               ),
               hintText: 'What would you like to do?',
             ),
@@ -47,6 +48,9 @@ class _AddTaskState extends State<AddTask> {
           Row(
             children: [
               OutlineButton(
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                ),
                 child: Text('Reminder'),
                 onPressed: () async {
                   await _selectDate(context);
@@ -57,6 +61,9 @@ class _AddTaskState extends State<AddTask> {
               ),
               Spacer(),
               OutlineButton(
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                ),
                 child: Text('Save'),
                 onPressed: _taskController.text.isNotEmpty
                     ? () async {

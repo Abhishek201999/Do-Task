@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'ProductSans',
         brightness: Brightness.light,
-        primaryColor: Colors.lightBlueAccent,
-        accentColor: Colors.blue[200],
+        primaryColor: Color.fromRGBO(92, 119, 210, 1),
+        accentColor: Color.fromRGBO(92, 119, 210, 0.9),
       ),
     );
   }
@@ -118,10 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          // backgroundColor: Colors.deepPurple,
+          centerTitle: true,
           title: const Text('Do Task'),
           bottom: TabBar(
-            // indicatorColor: Colors.deepPurpleAccent,
             tabs: <Widget>[
               Tab(
                 icon: const Icon(Icons.format_list_numbered),
